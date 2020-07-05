@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deployr.Web", "Deployr\Deployr.Web.csproj", "{D23FD1DF-C715-4585-BC07-89DDA8540723}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deployr.Web", "Deployr.Web\Deployr.Web.csproj", "{D23FD1DF-C715-4585-BC07-89DDA8540723}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deployr.Processor", "Deployr.Processor\Deployr.Processor.csproj", "{BA5694E5-597B-4DDF-A6A4-40BB114C5DB0}"
 EndProject

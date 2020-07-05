@@ -18,8 +18,10 @@ namespace Deployr.Processor
 				// Dump script logs to the webservice
 
 				// Update the status to failed/succeeded.
-				
+
 				// Sleep for ~5 seconds
+
+				throw new NotImplementedException();
 			}
 		}
 	}
