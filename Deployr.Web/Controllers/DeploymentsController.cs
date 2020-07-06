@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Deployr.Web.Contracts;
 using Deployr.Web.Exceptions;
 using Deployr.Web.Logic;
-using Deployr.Web.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,11 +1,9 @@
-﻿using Deployr.Web.DataAccess;
+﻿using Deployr.Web.Contracts;
+using Deployr.Web.DataAccess;
 using Deployr.Web.Exceptions;
-using Deployr.Web.Models;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -83,20 +81,6 @@ namespace Deployr.Web.Logic
 		{
 			using var fileStream = new FileStream(filePath, FileMode.Create);
 			await file.CopyToAsync(fileStream);
-		}
-
-		private static void UnzipArtifacts(string artifactFullFileName, string deployLocation)
-		{
-			try
-			{
-				System.IO.Compression.ZipFile.ExtractToDirectory(artifactFullFileName, deployLocation);
-			}
-			catch (Exception)
-			{
-				// Clean directory
-				Directory.Delete(deployLocation, true);
-				throw new WebException(400, "Unable to unzip file");
-			}
 		}
 
 		private DirectoryInfo CreateArtifactsDirectory(string deployLocation)

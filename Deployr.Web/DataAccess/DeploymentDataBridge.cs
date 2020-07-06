@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using Deployr.Web.Models;
+using Deployr.Web.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
