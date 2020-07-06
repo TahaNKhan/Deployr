@@ -34,6 +34,7 @@ namespace Deployr.Processor
 				.AddJsonFile("appsettings.json", false)
 				.Build();
 
+			// TODO: Setup/add logger
 			serviceCollection.AddSingleton<IConfiguration>(configuration);
 			serviceCollection.AddSingleton<AppSettings>();
 			serviceCollection.AddTransient<IProcessorTask, ProcessorTask>();

@@ -12,13 +12,12 @@ namespace Deployr.Web.Attributes
 	{
 		public override void OnActionExecuted(ActionExecutedContext context)
 		{
-			if (context.Exception is WebException webEx)
-			{
-				var httpContext = context.HttpContext;
-				httpContext.Response.StatusCode = webEx.ErrorCode;
-				context.Result = new ObjectResult(webEx.DefaultResponse);
-				context.Exception = null;
-			}
+			if (!(context.Exception is WebException webEx)) return;
+
+			var httpContext = context.HttpContext;
+			httpContext.Response.StatusCode = webEx.ErrorCode;
+			context.Result = new ObjectResult(webEx.DefaultResponse);
+			context.Exception = null;
 		}
 	}
 }

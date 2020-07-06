@@ -53,11 +53,11 @@ namespace Deployr.Web.Controllers
 		[HttpPost]
 		[ProducesResponseType(typeof(DefaultResponse), StatusCodes.Status200OK)]
 		[ProducesResponseType(typeof(DefaultResponse), StatusCodes.Status400BadRequest)]
-		public async Task<IActionResult> DeployToMachine([FromRoute]int id, IFormFile formFile)
+		public async Task<IActionResult> UploadPackage([FromRoute]int id, IFormFile formFile)
 		{
 			if (!ModelState.IsValid)
 				throw new WebException(400, "Invalid input");
-			var result = await _deployLogic.DeployToLocalMachineAsync(id, formFile);
+			var result = await _deployLogic.UploadPackageAsync(id, formFile);
 
 			return Ok(result);
 		}

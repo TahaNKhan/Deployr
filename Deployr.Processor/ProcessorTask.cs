@@ -35,9 +35,7 @@ namespace Deployr.Processor
 			var results = await Task.WhenAll(processTasks);
 
 			if (!results.All(s => s))
-			{
 				Console.WriteLine("Something failed");
-			}
 		}
 
 		private async Task<bool> ProcessDeployment(DeploymentInformation deployment)

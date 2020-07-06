@@ -11,7 +11,7 @@ namespace Deployr.Web.Logic
 {
 	public interface IDeployLogic
 	{
-		Task<DefaultResponse> DeployToLocalMachineAsync(int deploymentId, IFormFile file);
+		Task<DefaultResponse> UploadPackageAsync(int deploymentId, IFormFile file);
 		Task<DefaultResponse> CreateDeployment(CreateDeploymentRequest metadata);
 		Task<DeploymentInformation> GetDeploymentInformation(int id);
 		Task<IEnumerable<DeploymentInformation>> GetDeploymentsAsync(IEnumerable<DeploymentStatus> deploymentStatuses);
@@ -25,7 +25,7 @@ namespace Deployr.Web.Logic
 			_dataContextFactory = dataContextFactory;
 		}
 
-		public async Task<DefaultResponse> DeployToLocalMachineAsync(int deploymentId, IFormFile file)
+		public async Task<DefaultResponse> UploadPackageAsync(int deploymentId, IFormFile file)
 		{
 			var deploymentInformation = await GetDeploymentInformation(deploymentId);
 
@@ -111,9 +111,9 @@ namespace Deployr.Web.Logic
 
 		private static string DetermineDefaultDeployLocation()
 		{
-			string WindowsDefaultDeployLocation = "C:\\CustomApps";
+			const string windowsDefaultDeployLocation = "C:\\CustomApps";
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-				return WindowsDefaultDeployLocation;
+				return windowsDefaultDeployLocation;
 			throw new WebException(500, "Unsupported platform");
 		}
 
