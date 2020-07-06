@@ -1,7 +1,6 @@
 using Deployr.Web.Attributes;
 using Deployr.Web.DataAccess;
 using Deployr.Web.Logic;
-using Deployr.Web.SwaggerHelpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +24,7 @@ namespace Deployr.Web
 			services.AddSingleton<IDataContextFactory, DataContextFactory>();
 			services.AddSingleton<IDeployLogic, DeployLogic>();
 			services.AddControllers(config => config.Filters.Add(typeof(WebExceptionTransformerAttribute)));
-			services.AddSwaggerGen(s => s.OperationFilter<SwaggerFileOperationFilter>());
+			services.AddSwaggerGen();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

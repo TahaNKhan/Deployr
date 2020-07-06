@@ -28,8 +28,13 @@ namespace Deployr.Processor
 
 			// Make a call to the deployr web service to get deployments in ready state
 			var deployments = await GetReadyDeployments();
+			// TODO: Handle failure better
+			if (deployments == null)
+				return;
+			if (!deployments.Any())
+				return;
 			var processTasks = new List<Task<bool>>();
-			foreach (var deployment in deployments)
+			foreach (var deployment in deployments.Take(_appSettings.MaxConcurrentDeployments))
 				processTasks.Add(ProcessDeployment(deployment));
 
 			var results = await Task.WhenAll(processTasks);
@@ -40,13 +45,17 @@ namespace Deployr.Processor
 
 		private async Task<bool> ProcessDeployment(DeploymentInformation deployment)
 		{
+			var artifactLocation = $"{deployment.DeploymentLocation}\\artifacts";
+			var artifactFilePath = $"{artifactLocation}\\{deployment.PackageName}-{deployment.Version}.zip";
 			// Update database status to unzipping, Unzip artifacts
+			UnzipArtifacts(artifactFilePath, deployment.DeploymentLocation);
 
 			// Update deployment status to running script, Run the provided setup script
 
 			// Dump script logs to the webservice
 
 			// Update the status to failed/succeeded.
+
 			return true;
 		}
 

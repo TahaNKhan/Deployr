@@ -13,5 +13,6 @@ namespace Deployr.Processor.Models
 			_configuration = configuration;
 		}
 		public string DeployrUrl => _configuration["DeployrUrl"];
+		public int MaxConcurrentDeployments => int.Parse(_configuration["MaxConcurrentDeployments"]);
 	}
 }
