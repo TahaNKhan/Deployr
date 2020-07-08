@@ -1,4 +1,6 @@
-﻿using Deployr.Web.Contracts;
+﻿using Deployr.Web.Contracts.DataContracts;
+using Deployr.Web.Contracts.RequestContracts;
+using Deployr.Web.Contracts.ResponseContracts;
 using Deployr.Web.DataAccess;
 using Deployr.Web.Exceptions;
 using Microsoft.AspNetCore.Http;
@@ -11,10 +13,11 @@ namespace Deployr.Web.Logic
 {
 	public interface IDeployLogic
 	{
-		Task<DefaultResponse> UploadPackageAsync(int deploymentId, IFormFile file);
-		Task<DefaultResponse> CreateDeployment(CreateDeploymentRequest metadata);
+		Task<BasicResponse> UploadPackageAsync(int deploymentId, IFormFile file);
+		Task<BasicResponse> CreateDeployment(CreateDeploymentRequest metadata);
 		Task<DeploymentInformation> GetDeploymentInformation(int id);
 		Task<IEnumerable<DeploymentInformation>> GetDeploymentsAsync(IEnumerable<DeploymentStatus> deploymentStatuses);
+		Task<bool> UpdateDeploymentStatus(int id, DeploymentStatus status);
 	}
 	public class DeployLogic : IDeployLogic
 	{
@@ -25,7 +28,7 @@ namespace Deployr.Web.Logic
 			_dataContextFactory = dataContextFactory;
 		}
 
-		public async Task<DefaultResponse> UploadPackageAsync(int deploymentId, IFormFile file)
+		public async Task<BasicResponse> UploadPackageAsync(int deploymentId, IFormFile file)
 		{
 			var deploymentInformation = await GetDeploymentInformation(deploymentId);
 
@@ -33,7 +36,7 @@ namespace Deployr.Web.Logic
 				throw new WebException(400, "Deployment not found.");
 
 			if (deploymentInformation.DeploymentStatus != DeploymentStatus.Created)
-				return new DefaultResponse(deploymentId.ToString());
+				return new BasicResponse(deploymentId.ToString());
 
 			var deployLocation = GetDeployLocation(deploymentInformation.PackageName, deploymentInformation.Version);
 
@@ -50,15 +53,15 @@ namespace Deployr.Web.Logic
 			if (!updateResult)
 				throw new WebException(500, "Unable to update deploy location.");
 
-			return new DefaultResponse(deploymentId.ToString());
+			return new BasicResponse(deploymentId.ToString());
 		}
 
-		public async Task<DefaultResponse> CreateDeployment(CreateDeploymentRequest metadata)
+		public async Task<BasicResponse> CreateDeployment(CreateDeploymentRequest metadata)
 		{
 			using var dataContext = await _dataContextFactory.Construct();
 			var dataBridge = dataContext.GetDeploymentDataBridge();
 			var result = await dataBridge.CreateDeployment(metadata);
-			return new DefaultResponse(result.ToString());
+			return new BasicResponse(result.ToString());
 		}
 
 		public async Task<DeploymentInformation> GetDeploymentInformation(int id)
@@ -74,6 +77,14 @@ namespace Deployr.Web.Logic
 			using var dataContext = await _dataContextFactory.Construct();
 			var dataBridge = dataContext.GetDeploymentDataBridge();
 			var result = await dataBridge.UpdateDeployment(id, deploymentLocation, status);
+			return result;
+		}
+
+		public async Task<bool> UpdateDeploymentStatus(int id, DeploymentStatus status)
+		{
+			using var dataContext = await _dataContextFactory.Construct();
+			var dataBridge = dataContext.GetDeploymentDataBridge();
+			var result = await dataBridge.UpdateDeploymentStatus(id, status);
 			return result;
 		}
 

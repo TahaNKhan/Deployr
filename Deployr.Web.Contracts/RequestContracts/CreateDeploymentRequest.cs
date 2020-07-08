@@ -1,4 +1,4 @@
-﻿namespace Deployr.Web.Contracts
+﻿namespace Deployr.Web.Contracts.RequestContracts
 {
 	public class CreateDeploymentRequest
 	{

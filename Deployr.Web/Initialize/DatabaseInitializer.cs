@@ -10,11 +10,7 @@ namespace Deployr.Web.Initialize
 		{
 			var dbFileName = DatabaseConstants.DatabaseFileName;
 			if (File.Exists(dbFileName))
-#if DEBUG
-				File.Delete(dbFileName);
-#else
 				return;
-#endif
 			System.Data.SQLite.SQLiteConnection.CreateFile(dbFileName);
 			using var sqliteConnection = new System.Data.SQLite.SQLiteConnection($"Data Source={dbFileName}");
 			CreateNecessaryTables(sqliteConnection);

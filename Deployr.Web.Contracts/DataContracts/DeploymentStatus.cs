@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Deployr.Web.Contracts
+namespace Deployr.Web.Contracts.DataContracts
 {
 	public enum DeploymentStatus
 	{

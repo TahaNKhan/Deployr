@@ -1,4 +1,4 @@
-﻿using Deployr.Web.Contracts;
+﻿using Deployr.Web.Contracts.ResponseContracts;
 using System;
 
 namespace Deployr.Web.Exceptions
@@ -8,7 +8,7 @@ namespace Deployr.Web.Exceptions
 		public int ErrorCode { get; }
 		public string ErrorMessage { get; }
 
-		public DefaultResponse DefaultResponse => new DefaultResponse(new[] { ErrorMessage });
+		public BasicResponse DefaultResponse => new BasicResponse(new[] { ErrorMessage });
 
 		public WebException(int errorCode)
 		{

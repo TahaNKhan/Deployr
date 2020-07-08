@@ -1,5 +1,6 @@
 ﻿using Dapper;
-using Deployr.Web.Contracts;
+using Deployr.Web.Contracts.DataContracts;
+using Deployr.Web.Contracts.RequestContracts;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -16,6 +17,7 @@ namespace Deployr.Web.DataAccess
 
 		Task<bool> UpdateDeployment(int id, string deploymentLocation, DeploymentStatus status);
 		Task<IEnumerable<DeploymentInformation>> GetDeploymentsAsync(IEnumerable<DeploymentStatus> deploymentStatuses);
+		Task<bool> UpdateDeploymentStatus(int id, DeploymentStatus status);
 	}
 	public class DeploymentDataBridge : IDeploymentDataBridge
 	{
@@ -57,11 +59,12 @@ namespace Deployr.Web.DataAccess
 			var result = await _connection.ExecuteAsync(updateSql, new { status = (byte)status, deploymentLocation, id });
 			return result == 1;
 		}
-		
-		private static string ConvertIEnumerableToString<T>(IEnumerable<T> input)
+
+		public async Task<bool> UpdateDeploymentStatus(int id, DeploymentStatus status)
 		{
-			var result = string.Join(",", input.ToList());
-			return result;
+			var updateSql = "UPDATE deployments SET status = @status WHERE id = @id;";
+			var result = await _connection.ExecuteAsync(updateSql, new { status = (byte)status, id });
+			return result == 1;
 		}
 	}
 }
