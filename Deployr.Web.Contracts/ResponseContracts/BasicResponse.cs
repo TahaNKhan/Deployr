@@ -3,6 +3,11 @@ using System.Linq;
 
 namespace Deployr.Web.Contracts.ResponseContracts
 {
+	/// <summary>
+	/// The "default" response.
+	/// This should be used instead of an empty result body,
+	/// which will allow us to extend the contract in the future.
+	/// </summary>
 	public class BasicResponse: DefaultResponse<string>
 	{
 		public BasicResponse()
