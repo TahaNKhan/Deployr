@@ -1,12 +1,16 @@
 ﻿using Deployr.Processor.Models;
-using Deployr.Web.Contracts;
+using Deployr.Web.Contracts.DataContracts;
+using Deployr.Web.Contracts.RequestContracts;
+using Deployr.Web.Contracts.ResponseContracts;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Deployr.Processor
@@ -45,44 +49,82 @@ namespace Deployr.Processor
 
 		private async Task<bool> ProcessDeployment(DeploymentInformation deployment)
 		{
-			var artifactLocation = $"{deployment.DeploymentLocation}\\artifacts";
-			var artifactFilePath = $"{artifactLocation}\\{deployment.PackageName}-{deployment.Version}.zip";
-			// Update database status to unzipping, Unzip artifacts
-			UnzipArtifacts(artifactFilePath, deployment.DeploymentLocation);
-
-			// Update deployment status to running script, Run the provided setup script
-
-			// Dump script logs to the webservice
-
-			// Update the status to failed/succeeded.
-
-			return true;
-		}
-
-		private static void UnzipArtifacts(string artifactFullFileName, string deployLocation)
-		{
 			try
 			{
-				System.IO.Compression.ZipFile.ExtractToDirectory(artifactFullFileName, deployLocation);
+				var artifactLocation = $"{deployment.DeploymentLocation}\\artifacts";
+				var artifactFilePath = $"{artifactLocation}\\{deployment.PackageName}-{deployment.Version}.zip";
+				// Update database status to unzipping, Unzip artifacts
+				var updateStatusResult = await UpdateDeploymentStatus(deployment.Id, DeploymentStatus.Unzipping);
+				if (!updateStatusResult.WasSuccessful) { /** Log something... once we have a logger */ }
+				await UnzipArtifacts(artifactFilePath, deployment.DeploymentLocation);
+
+				// Update deployment status to running script, Run the provided setup script
+				updateStatusResult = await UpdateDeploymentStatus(deployment.Id, DeploymentStatus.RunningScript);
+				if (!updateStatusResult.WasSuccessful) { /** Log something... once we have a logger */ }
+
+				// Dump script logs to the webservice
+
+				// Update the status to failed/succeeded.
+				updateStatusResult = await UpdateDeploymentStatus(deployment.Id, DeploymentStatus.Done);
+				if (!updateStatusResult.WasSuccessful) { /** Log something... once we have a logger */ }
+
+				return true;
 			}
-			catch (Exception)
+			catch (Exception) 
 			{
-				// Clean directory
-				Directory.Delete(deployLocation, true);
-				throw new InvalidOperationException("Unable to unzip file");
+				await UpdateDeploymentStatus(deployment.Id, DeploymentStatus.Failed);
+
+				return false;
 			}
 		}
 
-		private async Task<IEnumerable<Web.Contracts.DeploymentInformation>> GetReadyDeployments()
+		private static Task UnzipArtifacts(string artifactFullFileName, string deployLocation)
 		{
-			var client = new RestClient(_appSettings.DeployrUrl);
+			return Task.Run(() =>
+			{
+				try
+				{
+					System.IO.Compression.ZipFile.ExtractToDirectory(artifactFullFileName, deployLocation);
+				}
+				catch (Exception)
+				{
+					throw new InvalidOperationException("Unable to unzip file");
+				}
+			});
+
+		
+		}
+
+		private async Task<IDefaultResponse> UpdateDeploymentStatus(int id, DeploymentStatus status)
+		{
+			var client = CreateDeployrRestClient();
+			var restRequest = new RestRequest($"api/Deployments/{id}/status", Method.PUT);
+			var requestBody = new UpdateDeploymentStatusRequest { Status = status };
+			restRequest.AddJsonBody(requestBody);
+			var result = await client.ExecuteAsync(restRequest);
+
+			return result.StatusCode == System.Net.HttpStatusCode.OK
+				? JsonConvert.DeserializeObject<BasicResponse>(result.Content)
+				: null;
+		}
+
+		private async Task<IEnumerable<DeploymentInformation>> GetReadyDeployments()
+		{
+			var client = CreateDeployrRestClient();
 			var request = new RestRequest("/api/Deployments", Method.GET);
-			request.AddQueryParameter("deploymentStatuses", Web.Contracts.DeploymentStatus.Ready.ToString());
+			request.AddQueryParameter("deploymentStatuses", DeploymentStatus.Ready.ToString());
 			var result = await client.ExecuteAsync(request);
 
 			return result.StatusCode == System.Net.HttpStatusCode.OK 
-				? JsonConvert.DeserializeObject<IEnumerable<Web.Contracts.DeploymentInformation>>(result.Content)
+				? JsonConvert.DeserializeObject<IEnumerable<DeploymentInformation>>(result.Content)
 				: null;
+		}
+
+		private IRestClient CreateDeployrRestClient()
+		{
+			if (string.IsNullOrWhiteSpace(_appSettings.DeployrUrl))
+				throw new InvalidOperationException("Deployr Web URL is not set.");
+			return new RestClient(_appSettings.DeployrUrl);
 		}
 	}
 }

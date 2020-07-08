@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Deployr.Web.Contracts;
+using Deployr.Web.Contracts.DataContracts;
+using Deployr.Web.Contracts.RequestContracts;
+using Deployr.Web.Contracts.ResponseContracts;
 using Deployr.Web.Exceptions;
 using Deployr.Web.Logic;
 using Microsoft.AspNetCore.Http;
@@ -21,8 +23,8 @@ namespace Deployr.Web.Controllers
 
 		[Route("")]
 		[HttpPost]
-		[ProducesResponseType(typeof(DefaultResponse), StatusCodes.Status201Created)]
-		[ProducesResponseType(typeof(DefaultResponse), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(typeof(BasicResponse), StatusCodes.Status201Created)]
+		[ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> CreateDeployment([FromBody]CreateDeploymentRequest metadata)
 		{
 			var result = await _deployLogic.CreateDeployment(metadata);
@@ -51,8 +53,8 @@ namespace Deployr.Web.Controllers
 
 		[Route("{id}/UploadPackage")]
 		[HttpPost]
-		[ProducesResponseType(typeof(DefaultResponse), StatusCodes.Status200OK)]
-		[ProducesResponseType(typeof(DefaultResponse), StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(typeof(BasicResponse), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> UploadPackage([FromRoute]int id, IFormFile formFile)
 		{
 			if (!ModelState.IsValid)
@@ -60,6 +62,20 @@ namespace Deployr.Web.Controllers
 			var result = await _deployLogic.UploadPackageAsync(id, formFile);
 
 			return Ok(result);
+		}
+
+		[Route("{id}/status")]
+		[HttpPut]
+		[ProducesResponseType(typeof(BasicResponse), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(BasicResponse), StatusCodes.Status400BadRequest)]
+		public async Task<IActionResult> UpdateStatus([FromRoute]int id, [FromBody]UpdateDeploymentStatusRequest statusUpdateRequest)
+		{
+			if (!ModelState.IsValid)
+				throw new WebException(400, "Invalid input");
+			var result = await _deployLogic.UpdateDeploymentStatus(id, statusUpdateRequest.Status);
+			if (!result)
+				throw new WebException(400, "Unable to update status");
+			return Ok(new BasicResponse());
 		}
 	}
 }
