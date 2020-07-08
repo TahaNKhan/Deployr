@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Deployr.Web.Contracts.ResponseContracts
 {
-	public class BasicResponse: IDefaultResponse
+	public class BasicResponse: DefaultResponse<string>
 	{
 		public BasicResponse()
 		{
@@ -18,9 +18,6 @@ namespace Deployr.Web.Contracts.ResponseContracts
 		{
 			ErrorMessages = errorMessages;
 		}
-		public bool WasSuccessful => (ErrorMessages?.Count() ?? 0) > 0 ? false : true;
-
-		public IEnumerable<string> ErrorMessages { get; set; }
-		public string CommonIdentifier { get; set; }
+		public new bool WasSuccessful => (ErrorMessages?.Count() ?? 0) > 0 ? false : true;
 	}
 }
