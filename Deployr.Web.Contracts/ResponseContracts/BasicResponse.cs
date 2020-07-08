@@ -9,9 +9,9 @@ namespace Deployr.Web.Contracts.ResponseContracts
 		{
 			
 		}
-		public BasicResponse(string commonIdentifier)
+		public BasicResponse(string identifier)
 		{
-			CommonIdentifier = commonIdentifier;
+			Identifier = identifier;
 		}
 
 		public BasicResponse(IEnumerable<string> errorMessages)

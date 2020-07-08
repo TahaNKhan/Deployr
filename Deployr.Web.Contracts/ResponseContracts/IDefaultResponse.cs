@@ -20,6 +20,6 @@ namespace Deployr.Web.Contracts.ResponseContracts
 	/// </summary>
 	public abstract class DefaultResponse<T> : DefaultResponse
 	{
-		public T CommonIdentifier { get; set; }
+		public T Identifier { get; set; }
 	}
 }
