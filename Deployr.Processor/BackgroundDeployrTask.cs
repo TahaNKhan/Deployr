@@ -37,7 +37,7 @@ namespace Deployr.Processor
                 {
                     logger.LogTrace("Starting to run listener task");
 
-                    processorTask.Process();
+                    processorTask.Process().Wait();
 
                     logger.LogTrace("Finished running listener task");
 
