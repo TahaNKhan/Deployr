@@ -108,7 +108,7 @@ namespace Deployr.Web.Logic
 				throw new WebException(400, "Package already deployed");
 
 			// Delete old artifacts
-			if (directoryExists || forceDeploy)
+			if (directoryExists)
 				Directory.Delete(deployLocation, true);
 
 			return Directory.CreateDirectory(deployLocation);
@@ -123,7 +123,7 @@ namespace Deployr.Web.Logic
 		private static string DetermineDefaultDeployLocation()
 		{
 			const string windowsDefaultDeployLocation = "C:\\CustomApps";
-			const string linuxDefaultDeployLocation = "~/CustomApps";
+			const string linuxDefaultDeployLocation = "/usr/local/bin/CustomApps";
 			
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 				return windowsDefaultDeployLocation;
