@@ -26,7 +26,7 @@ namespace Deployr.Processor
             }
             finally
             {
-                backgroundDeployrTask.CancellationToken.Cancel();
+                backgroundDeployrTask.CancellationTokenSource.Cancel();
             }
         }
 
