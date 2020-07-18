@@ -51,8 +51,8 @@ namespace Deployr.Processor
 		{
 			try
 			{
-				var artifactLocation = $"{deployment.DeploymentLocation}\\artifacts";
-				var artifactFilePath = $"{artifactLocation}\\{deployment.PackageName}-{deployment.Version}.zip";
+				var artifactLocation = Path.Join(deployment.DeploymentLocation, "artifacts");
+				var artifactFilePath = Path.Join(artifactLocation, $"{deployment.PackageName}-{deployment.Version}.zip");
 				// Update database status to unzipping, Unzip artifacts
 				var updateStatusResult = await UpdateDeploymentStatus(deployment.Id, DeploymentStatus.Unzipping);
 				if (!updateStatusResult.WasSuccessful) { /** Log something... once we have a logger */ }
