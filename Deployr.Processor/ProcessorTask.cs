@@ -95,7 +95,7 @@ namespace Deployr.Processor
 		
 		}
 
-		private async Task<IDefaultResponse> UpdateDeploymentStatus(int id, DeploymentStatus status)
+		private async Task<DefaultResponse> UpdateDeploymentStatus(int id, DeploymentStatus status)
 		{
 			var client = CreateDeployrRestClient();
 			var restRequest = new RestRequest($"api/Deployments/{id}/status", Method.PUT);
