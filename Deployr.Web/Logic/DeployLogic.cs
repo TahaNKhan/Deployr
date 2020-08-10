@@ -15,7 +15,7 @@ namespace Deployr.Web.Logic
 	{
 		Task<BasicResponse> UploadPackageAsync(int deploymentId, IFormFile file);
 		Task<BasicResponse> CreateDeployment(CreateDeploymentRequest metadata);
-		Task<DeploymentInformation> GetDeploymentInformation(int id);
+		Task<DeploymentInformation> GetDeploymentInformation(int id, bool includeLogs);
 		Task<IEnumerable<DeploymentInformation>> GetDeploymentsAsync(IEnumerable<DeploymentStatus> deploymentStatuses);
 		Task<bool> UpdateDeploymentStatus(int id, DeploymentStatus status);
 	}
@@ -30,7 +30,7 @@ namespace Deployr.Web.Logic
 
 		public async Task<BasicResponse> UploadPackageAsync(int deploymentId, IFormFile file)
 		{
-			var deploymentInformation = await GetDeploymentInformation(deploymentId);
+			var deploymentInformation = await GetDeploymentInformation(deploymentId, false);
 
 			if (deploymentInformation == null)
 				throw new WebException(400, "Deployment not found.");
@@ -64,11 +64,14 @@ namespace Deployr.Web.Logic
 			return new BasicResponse(result.ToString());
 		}
 
-		public async Task<DeploymentInformation> GetDeploymentInformation(int id)
+		public async Task<DeploymentInformation> GetDeploymentInformation(int id, bool includeLogs)
 		{
 			await using var dataContext = await _dataContextFactory.Construct();
 			var dataBridge = dataContext.GetDeploymentDataBridge();
 			var result = await dataBridge.GetDeploymentMetadata(id);
+			if (includeLogs)
+				result.Logs = await dataContext.GetLogsDataBridge().GetLogsAsync(id);
+			
 			return result;
 		}
 

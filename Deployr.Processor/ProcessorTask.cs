@@ -19,6 +19,7 @@ namespace Deployr.Processor
 	{
 		Task Process();
 	}
+
 	public class ProcessorTask: IProcessorTask
 	{
 		private readonly AppSettings _appSettings;
@@ -62,6 +63,8 @@ namespace Deployr.Processor
 				updateStatusResult = await UpdateDeploymentStatus(deployment.Id, DeploymentStatus.RunningScript);
 				if (!updateStatusResult.WasSuccessful) { /** Log something... once we have a logger */ }
 
+				await RunScript(artifactFilePath);
+
 				// Dump script logs to the webservice
 
 				// Update the status to failed/succeeded.
@@ -78,6 +81,11 @@ namespace Deployr.Processor
 			}
 		}
 
+		private async Task<string> RunScript(string artifactFilePath)
+		{
+			return await Task.FromResult("test");
+		}
+
 		private static Task UnzipArtifacts(string artifactFullFileName, string deployLocation)
 		{
 			return Task.Run(() =>
@@ -91,8 +99,6 @@ namespace Deployr.Processor
 					throw new InvalidOperationException("Unable to unzip file");
 				}
 			});
-
-		
 		}
 
 		private async Task<DefaultResponse> UpdateDeploymentStatus(int id, DeploymentStatus status)
@@ -113,7 +119,7 @@ namespace Deployr.Processor
 			var client = CreateDeployrRestClient();
 			var request = new RestRequest("/api/Deployments", Method.GET);
 			request.AddQueryParameter("deploymentStatuses", DeploymentStatus.Ready.ToString());
-			var result = await client.ExecuteAsync(request);
+			var result = await client.ExecuteAsync(request).ConfigureAwait(false);
 
 			return result.StatusCode == System.Net.HttpStatusCode.OK 
 				? JsonConvert.DeserializeObject<IEnumerable<DeploymentInformation>>(result.Content)

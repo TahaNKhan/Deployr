@@ -33,7 +33,7 @@ namespace Deployr.Web.Initialize
 
 			// Logs table
 			using var command2 = connection.CreateCommand();
-			command2.CommandText = @"CREATE TABLE logs(id INTEGER PRIMARY KEY AUTOINCREMENT, deployment_id INTEGER, log TEXT)";
+			command2.CommandText = @"CREATE TABLE logs(id INTEGER PRIMARY KEY AUTOINCREMENT,  deployment_id INTEGER, log TEXT, timestamp_utc DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL)";
 			command2.ExecuteNonQuery();
 
 			connection.Close();

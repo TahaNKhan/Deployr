@@ -23,6 +23,7 @@ namespace Deployr.Web
 		{
 			services.AddSingleton<IDataContextFactory, DataContextFactory>();
 			services.AddSingleton<IDeployLogic, DeployLogic>();
+			services.AddSingleton<ILogsLogic, LogsLogic>();
 			services.AddControllers(config => config.Filters.Add(typeof(WebExceptionTransformerAttribute)));
 			services.AddSwaggerGen();
 		}
@@ -31,9 +32,8 @@ namespace Deployr.Web
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
 			if (env.IsDevelopment())
-			{
 				app.UseDeveloperExceptionPage();
-			}
+			
 
 			app.UseHttpsRedirection();
 

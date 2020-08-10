@@ -43,6 +43,7 @@ namespace Deployr.Web.DataAccess
 		{
 			var getIdCommand = "SELECT id, package_name as packagename, version, status as deploymentstatus, timestamp_utc as timestamp, artifact_location as deploymentlocation FROM deployments WHERE id = @id";
 			var result = await _connection.QueryFirstAsync<DeploymentInformation>(getIdCommand, new { id }).ConfigureAwait(false);
+			
 			return result;
 		}
 
