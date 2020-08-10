@@ -10,8 +10,11 @@ namespace Deployr.Processor.Logic
 	{
 		Task RunScript(string scriptPath, DeploymentInformation deployment);
 	}
-	public class ScriptRunner: IScriptRunner
+	public class ScriptRunner : IScriptRunner
 	{
-		
+		public Task RunScript(string scriptPath, DeploymentInformation deployment)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
