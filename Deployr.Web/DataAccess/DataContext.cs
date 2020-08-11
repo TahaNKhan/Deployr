@@ -10,6 +10,8 @@ namespace Deployr.Web.DataAccess
 	public interface IDataContext: IDisposable, IAsyncDisposable
 	{
 		IDeploymentDataBridge GetDeploymentDataBridge();
+
+		ILogsDataBridge GetLogsDataBridge();
 	}
 
 	public class DataContext : IDataContext
@@ -34,6 +36,11 @@ namespace Deployr.Web.DataAccess
 		public IDeploymentDataBridge GetDeploymentDataBridge()
 		{
 			return new DeploymentDataBridge(_dbConnection);
+		}
+
+		public ILogsDataBridge GetLogsDataBridge()
+		{
+			return new LogsDataBridge(_dbConnection);
 		}
 
 		public void Dispose()

@@ -34,9 +34,9 @@ namespace Deployr.Web.Controllers
 		[Route("{id}")]
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DeploymentInformation))]
-		public async Task<IActionResult> GetDeploymentInformation([FromRoute]int id)
+		public async Task<IActionResult> GetDeploymentInformation([FromRoute]int id, bool? includeLogs)
 		{
-			var result = await _deployLogic.GetDeploymentInformation(id);
+			var result = await _deployLogic.GetDeploymentInformation(id, includeLogs.HasValue ? includeLogs.Value : false);
 			return Ok(result);
 		}
 

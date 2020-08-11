@@ -13,5 +13,6 @@ namespace Deployr.Web.Contracts.DataContracts
 		public DeploymentStatus DeploymentStatus { get; set; }
 		public string DeploymentLocation { get; set; }
 		public DateTimeOffset Timestamp { get; set; }
+		public IEnumerable<Log> Logs { get; set; }
 	}
 }
